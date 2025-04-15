@@ -12,6 +12,85 @@ import matplotlib.pyplot as plt
 plt.style.use("ggplot")
 
 
+def generate_pltm_toy_data(D, V, S, K, alpha=1.0, beta=1.0, seed=123):
+    np.random.seed(seed)
+
+    alpha_k = [alpha] * K
+    theta_dk = np.random.dirichlet(alpha=alpha_k, size=D)
+
+    beta_v = [beta] * V
+    phi_kv = np.random.dirichlet(alpha=beta_v, size=K)
+
+    beta_s = [beta] * S
+    phi_ks = np.random.dirichlet(alpha=beta_s, size=K)
+
+    W, Z = [], []
+    X, Y = [], []
+
+    N_d = [None] * D
+    N_dw = np.zeros((D, V))
+
+    M_d = [None] * D
+    M_dx = np.zeros((D, S))
+
+    min_N_d, max_N_d = 100, 200
+    min_M_d, max_M_d = 2, 5
+
+    print("generating...")
+
+    for d in tqdm(range(D)):
+        N_d[d] = np.random.randint(low=min_N_d, high=max_N_d)
+        z_dn = [None] * N_d[d]
+        w_dn = [None] * N_d[d]
+
+        M_d[d] = np.random.randint(low=min_M_d, high=max_M_d)
+        y_dn = [None] * M_d[d]
+        x_dn = [None] * M_d[d]
+
+        for n in range(N_d[d]):
+            z = np.random.choice(K, p=theta_dk[d])
+            z_dn[n] = z
+            w = np.random.choice(V, p=phi_kv[z])
+            w_dn[n] = w
+            N_dw[d, w] += 1
+
+        for m in range(M_d[d]):
+            y = np.random.choice(K, p=theta_dk[d])
+            y_dn[m] = y
+            x = np.random.choice(S, p=phi_ks[y])
+            x_dn[m] = x
+            M_dx[d, x] += 1
+
+        Z.append(z_dn)
+        W.append(w_dn)
+        Y.append(y_dn)
+        X.append(x_dn)
+
+    with open("pltm.test.txt", mode="w") as f:
+        print("\n".join([" ".join([str(w) for w in words]) for words in W]), file=f)
+
+    with open("pltm.test.word2id.txt", mode="w") as f:
+        print("\n".join([f"{w}\t{w}" for w in range(V)]), file=f)
+
+    with open("pltm.test.support.txt", mode="w") as f:
+        print("\n".join([" ".join([str(x) for x in xs]) for xs in X]), file=f)
+
+    with open("pltm.test.support.word2id.txt", mode="w") as f:
+        print("\n".join([f"{s}\t{s}" for s in range(S)]), file=f)
+
+    params = {
+        "K": K,
+        "alpha": alpha,
+        "beta": beta,
+        "phi_kv": phi_kv,
+        "phi_ks": phi_ks,
+        "theta": theta_dk,
+    }
+    np.savez("pltm.test.params.npz", **params)
+
+    return params
+
+
 def generate_lda_toy_data(D, V, K, alpha=1.0, beta=1.0, seed=123):
     np.random.seed(seed)
 
