@@ -10,7 +10,7 @@ from .util import detect_input
 eps = 1e-8
 
 
-class NLDE():
+class DocVec():
 
     def __init__(self,
                  corpus,

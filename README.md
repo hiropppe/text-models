@@ -9,7 +9,7 @@
 - ATM (Author Topic Model)
 
 ### Neural Document Models
-- SPPMI-SVD
+- DocVec (SPPMI-SVD)
 
 ### Install
 ```
