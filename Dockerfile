@@ -24,9 +24,9 @@ RUN ln -s /usr/bin/python3 /usr/bin/python
 
 RUN pipx install poetry
 
-COPY . /text-model
+COPY . /text-models
 
-WORKDIR /text-model
+WORKDIR /text-models
 RUN poetry install
 
 #CMD ["poetry", "run", "jupyter", "lab", "--allow-root", "--ip=0.0.0.0", "--NotebookApp.token=''", "--no-browser"]

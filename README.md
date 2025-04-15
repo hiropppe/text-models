@@ -1,5 +1,5 @@
-## Topic Models
-**Learning implementation** of Topic (or Document) Models in Cython.
+## Text Models
+**Learning implementation** of Text Models in Cython.
 
 ### Probabilistic Topic Models (Collapsed Gibbs sampling)
 - LDA (Latent Dirichlet Allocation)
@@ -13,5 +13,5 @@
 
 ### Install
 ```
-poetry add git+https://github.com/hiropppe/topic-model.git#master
+poetry add git+https://github.com/hiropppe/text-models.git#master
 ```

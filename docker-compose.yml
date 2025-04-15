@@ -1,8 +1,8 @@
 services:
-  text-model:
+  text-models:
     build: .
-    container_name: text-model
-    image: text-model
+    container_name: text-models
+    image: text-models
     volumes:
       - .:/usr/src/develop
     network_mode: host
