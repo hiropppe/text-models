@@ -107,4 +107,10 @@ venv.bak/
 *.cpp
 
 cytm/*.html
+notebooks/*.tar.gz
+notebooks/lda.py-0.3/
+notebooks/*.test*.txt
+notebooks/*.test*.npz
+*.model
+
 /output
