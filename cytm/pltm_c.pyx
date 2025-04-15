@@ -60,11 +60,11 @@ def inference(list D,
     cdef double total, n_dk
     cdef np.ndarray[DOUBLE_t, ndim=1] p = np.zeros(K)
     cdef np.ndarray[DOUBLE_t, ndim=1] rands
-    #cdef np.ndarray[INT_t, ndim=1] seq = np.zeros(N, dtype=np.int32)
+    cdef np.ndarray[INT_t, ndim=1] seq = np.zeros(N, dtype=np.int32)
 
-    #for d in range(N):
-    #    seq[d] = d
-    #np.random.shuffle(seq)
+    for d in range(N):
+        seq[d] = d
+    np.random.shuffle(seq)
 
     for t in range(T):
         n_kw = n_tkw[t]
@@ -72,9 +72,8 @@ def inference(list D,
         rands = np.random.rand(L[t])
         w = 0
         beta_t = beta[t]
-        for i in range(N):
-            #d = seq[i]
-            d = i
+        for d in range(N):
+            d = seq[d]
             for n in range(n_td[t, d]):
                 z_tdn = Z[t][d][n]
                 w_tdn = D[t][d][n]

@@ -1,6 +1,8 @@
+import gzip
 import logging
 import numpy as np
 import pathlib
+import pickle
 import re
 # np.seterr(all="raise")
 
@@ -11,8 +13,9 @@ from gensim.corpora.dictionary import Dictionary
 from gensim.models.coherencemodel import CoherenceModel
 from gensim.models.word2vec import LineSentence
 from itertools import combinations
+from os.path import expanduser
 from pathlib import Path
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
 
 def perplexity(N, n_kw, n_dk, alpha, beta):
@@ -79,7 +82,7 @@ def document_generator(path):
 def detect_input(input, doc_break=False):
     if isinstance(input, str):
         # Path like string input
-        if re.fullmatch(r'.{,20}(/[^/]{,20})+', input):
+        if re.fullmatch(r'.{,50}(/[^/]{,50})+', input):
             corpus = detect_input(Path(input))
         else:
             corpus = text2list(input, doc_break)
@@ -165,6 +168,19 @@ def get_topics(n_kw, vocab, beta, topn=10):
         word_probs = [(vocab[w], (n_kw[k, w] + beta) / (n_k[k] + V * beta)) for w in topn_indices]
         topics.append(word_probs)
     return topics
+
+
+def save_model(model, output_path):
+    output_path = Path(expanduser(output_path))
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with gzip.open(output_path, "wb") as f:
+        pickle.dump(model, f)
+
+
+def load_model(model_path):
+    with gzip.open(model_path, "rb") as f:
+        model = pickle.load(f)
+    return model
 
 
 def get_coherence_model(W, n_kw, top_words, coherence_model, test_texts=None, corpus=None, coo_matrix=None, coo_word2id=None, wv=None, verbose=False):

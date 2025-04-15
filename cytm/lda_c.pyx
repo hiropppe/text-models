@@ -17,22 +17,23 @@ def init(list D,
          list Z,
          np.ndarray[INT_t, ndim=2] n_kw not None,
          np.ndarray[INT_t, ndim=2] n_dk not None,
-         np.ndarray[INT_t, ndim=1] n_k not None,
-         np.ndarray[INT_t, ndim=1] n_d not None):
+         np.ndarray[INT_t, ndim=1] n_k  not None,
+         np.ndarray[INT_t, ndim=1] n_d  not None):
 
     cdef int N = n_dk.shape[0]
+    cdef np.ndarray[INT_t, ndim=1] z_d
+    cdef np.ndarray[INT_t, ndim=1] w_d
     cdef int N_d
     cdef Py_ssize_t d, n, w_dn, z_dn
-    cdef np.ndarray[INT_t, ndim=1] zd
-    cdef np.ndarray[INT_t, ndim=1] dd
+
     for d in range(N):
         N_d = len(D[d])
         n_d[d] = N_d
-        zd = Z[d]
-        dd = D[d]
+        z_d = Z[d]
+        w_d = D[d]
         for n in range(N_d):
-            z_dn = zd[n]
-            w_dn = dd[n]
+            z_dn = z_d[n]
+            w_dn = w_d[n]
             n_kw[z_dn, w_dn] += 1
             n_dk[d, z_dn] += 1
             n_k[z_dn] += 1
@@ -42,35 +43,37 @@ def inference(list D,
               list Z,
               np.ndarray[INT_t, ndim=2] n_kw not None,
               np.ndarray[INT_t, ndim=2] n_dk not None,
-              np.ndarray[INT_t, ndim=1] n_k not None,
-              np.ndarray[INT_t, ndim=1] n_d not None,
+              np.ndarray[INT_t, ndim=1] n_k  not None,
+              np.ndarray[INT_t, ndim=1] n_d  not None,
               double alpha,
               double beta):
+
     cdef int N = n_dk.shape[0]
     cdef int K = n_dk.shape[1]
     cdef int V = n_kw.shape[1]
-    cdef int M
+    cdef np.ndarray[INT_t, ndim=1] z_d
+    cdef np.ndarray[INT_t, ndim=1] d_d
+    cdef int N_d
     cdef Py_ssize_t m, n, d, w_dn, z_dn, z_new
     cdef double total
     cdef np.ndarray[DOUBLE_t, ndim=1] p = np.zeros(K)
     cdef np.ndarray[DOUBLE_t, ndim=1] rands
     cdef np.ndarray[INT_t, ndim=1] seq = np.zeros(N, dtype=np.int32)
-    cdef np.ndarray[INT_t, ndim=1] zd
-    cdef np.ndarray[INT_t, ndim=1] dd
 
     for d in range(N):
         seq[d] = d
+
     np.random.shuffle(seq)
 
-    for m in range(N):
-        d = seq[m]
-        zd = Z[d]
-        dd = D[d]
-        M = n_d[d]
-        rands = np.random.rand (M)
-        for n in range(M):
-            z_dn = zd[n]
-            w_dn = dd[n]
+    for d in range(N):
+        d = seq[d]
+        z_d = Z[d]
+        d_d = D[d]
+        N_d = n_d[d]
+        rands = np.random.rand (N_d)
+        for n in range(N_d):
+            z_dn = z_d[n]
+            w_dn = d_d[n]
 
             n_kw[z_dn, w_dn] -= 1
             n_dk[d, z_dn] -= 1
